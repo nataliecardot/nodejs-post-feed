@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nataliecardot/nodejs-restful-shop/issues"
   },
-  "homepage": "https://github.com/nataliecardot/nodejs-restful-shop#readme"
+  "homepage": "https://github.com/nataliecardot/nodejs-restful-shop#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
