@@ -5,3 +5,13 @@ exports.getPosts = (req, res, next) => {
     posts: [{ title: 'First Post', content: 'This is the first post!' }],
   });
 };
+
+exports.createPost = (req, res, next) => {
+  const { title, content } = req.body;
+  // Create post in db
+  // 201: success, resource was created
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: { id: new Date().toISOString, title, content },
+  });
+};
