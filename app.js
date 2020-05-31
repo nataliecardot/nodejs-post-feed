@@ -9,7 +9,7 @@ const app = express();
 // app.use(bodyParser.urlencoded()); // For x-www-form-urlencoded, default format for data sent via form post request
 app.use(bodyParser.json()); // application/json
 
-// Want to offer data from this server to clients served by a different server (front and back end are typically served on different servers); set CORS headers to prevent CORS error when different domain tries to send an HTTP request to this server. CORS (exchange of data between client and server [sending requests and responses] running on different domains [for example localhost:3000 and localhost:8080; port number is part of domain]) not allowed by browsers by default
+// Set CORS headers to bypass CORS error, a default security mechanism set by browsers that occurs when the server-side web API and client are on different servers/domains and try to exchange data
 app.use((req, res, next) => {
   // Allow data/content to be accessed by specific origins/clients (all in this case)
   res.setHeader('Access-Control-Allow-Origin', '*');
