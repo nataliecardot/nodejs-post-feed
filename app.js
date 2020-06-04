@@ -9,7 +9,7 @@ const feedRoutes = require('./routes/feed');
 
 const MONGODB_URI =
   // process object is globally available in Node app; part of Node core runtime. The env property contains all environment variables known by process object. Using dotenv to store environment variables. It loads environment variables from .env file into process.env (see https://www.youtube.com/watch?v=17UVejOw3zA)
-  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-4yuid.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-4yuid.mongodb.net/${process.env.MONGO_DATABASE_NAME}`;
 
 const app = express();
 
@@ -33,8 +33,12 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoutes);
 
-mongoose.connect(MONGODB_URI, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-});
-app.listen(8080);
+mongoose
+  .connect(MONGODB_URI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  })
+  .then((result) => {
+    app.listen(8080);
+  })
+  .catch((err) => console.log(err));
