@@ -36,6 +36,15 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoutes);
 
+// This will be executed whenever an error is thrown (in sync code) or forwarded (in async code) with next()
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  // message property exists by default and holds message passed to constructor of error object
+  const message = error.message;
+  res.status(status).json({ message });
+});
+
 mongoose
   .connect(MONGODB_URI, {
     useUnifiedTopology: true,

@@ -12,8 +12,8 @@ router.get('/posts', feedController.getPosts);
 router.post(
   '/post',
   [
-    // Consistent with client-side validation logic
-    body('title').trim().isLength({ min: 5 }),
+    // Setting title min length to 7 even though it's 5 in front-end validation, just to test error handling middleware (change back later)
+    body('title').trim().isLength({ min: 7 }),
     body('content').trim().isLength({ min: 5 }),
   ],
   feedController.createPost
