@@ -20,7 +20,7 @@ const postSchema = new Schema(
       required: true,
     },
   },
-  // When a new object is added to db, MongoDB will add a timestamp; automatically get a created at and updated at timestamp
+  // When a new object is added to db, MongoDB will add a timestamp; automatically get a createdAt and updatedAt timestamp
   {
     timestamps: true,
   }
