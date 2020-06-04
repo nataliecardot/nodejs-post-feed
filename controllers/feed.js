@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator');
+
 exports.getPosts = (req, res, next) => {
   // json() is Express method for conveniently returning a response with JSON data with correct headers (Content-Type: application/json) set, etc.
   // Setting the appropriate status code is important (even though 200 is the default, better to be clear) because in REST API client depends on the code to know which UI to display (especially important to set error code), unlike in non-REST API/traditional web app in which you render views on the server so client doesn't need to know status code
@@ -18,6 +20,15 @@ exports.getPosts = (req, res, next) => {
 };
 
 exports.createPost = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({
+        message: 'Validation failed; entered data is incorrect.',
+        errors: errors.array(),
+      });
+  }
   const { title, content } = req.body;
   // Create post in db
   // 201: success, resource was created
