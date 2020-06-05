@@ -31,7 +31,8 @@ const fileFilter = (req, file, cb) => {
   file.mimetype === 'image/png' ||
   file.mimetype === 'image/jpg' ||
   file.mimetype === 'image/jpeg'
-    ? cb(null, true)
+    ? // Second arg is whether file should be stored
+      cb(null, true)
     : cb(null, false);
 };
 
