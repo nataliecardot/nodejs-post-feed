@@ -3,22 +3,17 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 
 exports.getPosts = (req, res, next) => {
-  // json() is Express method for conveniently returning a response with JSON data with correct headers (Content-Type: application/json) set, etc.
-  // Setting the appropriate status code is important (even though 200 is the default, better to be clear) because in REST API client depends on the code to know which UI to display (especially important to set error code), unlike in non-REST API/traditional web app in which you render views on the server so client doesn't need to know status code
-  res.status(200).json({
-    posts: [
-      {
-        _id: '1',
-        title: 'First Post',
-        content: 'This is the first post!',
-        imageUrl: 'images/plant.jpg',
-        creator: {
-          name: 'Jane',
-        },
-        createdAt: new Date(),
-      },
-    ],
-  });
+  Post.find()
+    .then((posts) => {
+      // Note using destructuring in json method, post instead of posts: posts
+      res.status(200).json({ message: 'Fetched posts successfully.', posts });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
 };
 
 exports.createPost = (req, res, next) => {
@@ -50,6 +45,26 @@ exports.createPost = (req, res, next) => {
         err.statusCode = 500;
       }
       // Can't throw error since in async code/promise chain. Passing err to next() reaches next error handling Express middleware
+      next(err);
+    });
+};
+
+exports.getPost = (req, res, next) => {
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error('No post found.');
+        error.statusCode = 404;
+        // If you throw error inside of then block, next catch block will be reached, and that error will be passed as an error to the catch block
+        throw error;
+      }
+      res.status(200).json({ message: 'Post fetched.', post });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
       next(err);
     });
 };
