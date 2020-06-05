@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const { uuid } = require('uuidv4');
 
 // Tells server to load anything in .env into an environment variable.
 require('dotenv').config();
