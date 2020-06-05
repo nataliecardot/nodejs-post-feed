@@ -24,11 +24,17 @@ exports.createPost = (req, res, next) => {
     // Since not in async code, automatically exits function execution and instead tries to reach next error handling middleware provided in Express application
     throw error;
   }
+  if (!req.file) {
+    const error = new Error('No image provided.');
+    error.statusCode = 422;
+    throw error;
+  }
+  const imageUrl = req.file.path.replace('\\', '/');
   const { title, content } = req.body;
   const post = new Post({
     title,
     content,
-    imageUrl: 'images/plant.jpg',
+    imageUrl,
     creator: { name: 'Jane' },
   });
   post
@@ -68,3 +74,9 @@ exports.getPost = (req, res, next) => {
       next(err);
     });
 };
+
+// For Windows use this imageUrl, see #379
+// exports.updatePost = (req, res, next) => {
+//   ...
+//   imageUrl = req.file.path.replace("\\","/");
+// }

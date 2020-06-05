@@ -17,9 +17,28 @@ const MONGODB_URI =
 
 const app = express();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // First arg is for error message to throw to inform multer something is wrong with incoming file and it should not store it; with null, telling multer okay to store it
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, uuid());
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  file.mimetype === 'image/png' ||
+  file.mimetype === 'image/jpg' ||
+  file.mimetype === 'image/jpeg'
+    ? cb(null, true)
+    : cb(null, false);
+};
+
 // Middleware needed to parse incoming JSON data so can extract it on the request body (body parser adds body field on incoming request)
 // app.use(bodyParser.urlencoded()); // For x-www-form-urlencoded, default format for data sent via form post request
 app.use(bodyParser.json()); // application/json
+app.use(multer({ storage: fileStorage, fileFilter }).single('image')); // .single('image')) informs multer will extract single file stored in field named image in incoming requests
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Set CORS headers to bypass CORS error, a default security mechanism set by browsers that occurs when the server-side web API (the back end, which has the API endpoints, the path and method, and defines the logic that should execute on the server when a request reaches them) and client (front end) are on different servers/domains and try to exchange data
