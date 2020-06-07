@@ -12,13 +12,23 @@ router.get('/posts', feedController.getPosts);
 router.post(
   '/post',
   [
-    // Setting title min length to 7 even though it's 5 in front-end validation, just to test error handling middleware (change back later)
-    body('title').trim().isLength({ min: 7 }),
+    body('title').trim().isLength({ min: 5 }),
     body('content').trim().isLength({ min: 5 }),
   ],
   feedController.createPost
 );
 
 router.get('/post/:postId', feedController.getPost);
+
+// Editing a post is like replacing old post with a new one; only keeping old ID; PUT method used for replacing a resource
+// Can use PUT for async requests triggered by JS, but not through normal forms
+router.put(
+  '/post/:postId',
+  [
+    body('title').trim().isLength({ min: 5 }),
+    body('content').trim().isLength({ min: 5 }),
+  ],
+  feedController.updatePost
+);
 
 module.exports = router;
