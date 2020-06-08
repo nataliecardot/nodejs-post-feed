@@ -31,4 +31,7 @@ router.put(
   feedController.updatePost
 );
 
+// For DELETE routes, can't send body, but as with all routes, can encode data in the URL
+router.delete('/post/:postId', feedController.deletePost);
+
 module.exports = router;
