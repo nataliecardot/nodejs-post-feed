@@ -10,6 +10,7 @@ const { uuid } = require('uuidv4');
 require('dotenv').config();
 
 const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
 
 const MONGODB_URI =
   // process object is globally available in Node app; part of Node core runtime. The env property contains all environment variables known by process object. Using dotenv to store environment variables. It loads environment variables from .env file into process.env (see https://www.youtube.com/watch?v=17UVejOw3zA)
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 // This will be executed whenever an error is thrown (in sync code) or forwarded (in async code) with next()
 app.use((error, req, res, next) => {
