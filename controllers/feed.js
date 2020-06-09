@@ -6,15 +6,28 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 
 exports.getPosts = (req, res, next) => {
+  const currentPage = req.query.page || 1;
+  const perPage = 2;
+  let totalItems;
   Post.find()
+    .countDocuments()
+    .then((count) => {
+      totalItems = count;
+      return Post.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
     .then((posts) => {
-      // Note using destructuring in json method, post instead of posts: posts
-      res.status(200).json({ message: 'Fetched posts successfully.', posts });
+      // Note using destructuring in json method (e.g., post instead of posts: posts)
+      res
+        .status(200)
+        .json({ message: 'Fetched posts successfully.', posts, totalItems });
     })
     .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      // Can't throw error since in async code/promise chain. Passing err to next() reaches next error handling Express middleware
       next(err);
     });
 };
@@ -53,7 +66,6 @@ exports.createPost = (req, res, next) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
-      // Can't throw error since in async code/promise chain. Passing err to next() reaches next error handling Express middleware
       next(err);
     });
 };
