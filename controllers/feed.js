@@ -27,7 +27,7 @@ exports.getPosts = (req, res, next) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
-      // Can't throw error since in async code/promise chain. Passing err to next() reaches next error handling Express middleware
+      // Can't throw error since in async code/catch block of promise chain (if you throw error inside of then block, the subsequent catch block will be reached, and that error will be passed as an error to the catch block). Passing err to next() reaches next error handling Express middleware
       next(err);
     });
 };
