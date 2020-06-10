@@ -19,8 +19,9 @@ router.put(
       .withMessage('Please enter a valid email address.')
       // Check if email address already exists
       // Method found in validator.js docs. validator.js implicitly installed with express-validator
-      // Method takes as args a function that retrieves the value we're looking at, and an object from which we can extract the request. Returns true if validation succeeds, or return a promise if the function returns some async task
-      .custom((value, { req }) => {
+      // Method takes as args a function that retrieves the value that was input, and an object from which we can extract the request. Returns true if validation succeeds, or return a promise if the function returns some async task
+      // See https://express-validator.github.io/docs/custom-validators-sanitizers.html
+      .custom((value) => {
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             // This will cause validation to fail (all other scenarios will cause it to succeed )
