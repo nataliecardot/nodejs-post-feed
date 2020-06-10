@@ -77,7 +77,7 @@ exports.getPost = (req, res, next) => {
       if (!post) {
         const error = new Error('No post found.');
         error.statusCode = 404;
-        // If you throw error inside of then block, next catch block will be reached, and that error will be passed as an error to the catch block
+        // If you throw error inside of then block, the subsequent catch block will be reached, and that error will be passed as an error to the catch block
         throw error;
       }
       res.status(200).json({ message: 'Post fetched.', post });
