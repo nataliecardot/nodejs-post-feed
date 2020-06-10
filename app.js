@@ -66,7 +66,8 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   // message property exists by default and holds message passed to constructor of error object
   const message = error.message;
-  res.status(status).json({ message });
+  const data = error.data;
+  res.status(status).json({ message, data });
 });
 
 mongoose
