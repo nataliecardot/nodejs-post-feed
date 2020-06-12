@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
 
-// This will be executed whenever an error is thrown (in sync code) or forwarded (in async code) with next()
+// Executed whenever an error is thrown (in sync code) or forwarded (in async code) with next()
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
