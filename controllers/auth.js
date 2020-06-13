@@ -36,3 +36,34 @@ exports.signup = (req, res, next) => {
       next(err);
     });
 };
+
+exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  let loadedUser;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error('A user with this email could not be found.');
+        error.statusCode = 401; // 401: not authenticated
+        throw error;
+      }
+      // User with provided email exists
+      loadedUser = user;
+      // Check whether submitted password matches hashed password stored for user in db
+      return bcrypt.compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error('Incorrect password.');
+        error.statusCode = 401;
+        throw error;
+      }
+      // Entered password is correct. Generate JSON web token
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
