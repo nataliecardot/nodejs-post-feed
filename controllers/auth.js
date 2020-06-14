@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
@@ -59,6 +60,16 @@ exports.login = (req, res, next) => {
         throw error;
       }
       // Entered password is correct. Generate JSON web token
+      // sign method creates a new signature and packs it into a new JSON web token. Second arg is the secret, the private key used for signing
+      const token = jwt.sign(
+        {
+          email: loadedUser.email,
+          userId: loadedUser._id.toString(),
+        },
+        'somesupersecretsecret',
+        { expiresIn: '1h' }
+      );
+      res.status(200).json({ token, userId: loadedUser._id.toString() });
     })
     .catch((err) => {
       if (!err.statusCode) {
