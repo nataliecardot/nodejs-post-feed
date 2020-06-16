@@ -4,6 +4,7 @@ const path = require('path');
 const { validationResult } = require('express-validator');
 
 const Post = require('../models/post');
+const User = require('../models/user');
 
 exports.getPosts = (req, res, next) => {
   const currentPage = req.query.page || 1;
@@ -47,19 +48,33 @@ exports.createPost = (req, res, next) => {
   }
   const imageUrl = req.file.path.replace('\\', '/');
   const { title, content } = req.body;
+  let creator;
   const post = new Post({
     title,
     content,
     imageUrl,
-    creator: { name: 'Jane' },
+    // userId was stored in request object, extracted from decoded token in is-auth middleware
+    // Will be a string, not an ObjectId, but Mongoose converts it behind the scenes
+    creator: req.userId,
   });
   post
     .save()
     .then((result) => {
-      // 201: success, resource was created
+      // Add post to list of posts for given user
+      return User.findById(req.userId);
+    })
+    .then((user) => {
+      // user object is a Mongoose model in the end, and it has a posts property
+      creator = user;
+      // Mongoose will do all the heavy lifting of pulling out the post id and adding it to the user
+      user.posts.push(post);
+      return user.save();
+    })
+    .then((result) => {
       res.status(201).json({
         message: 'Post created successfully',
-        post: result,
+        post,
+        creator: { _id: creator._id, name: creator.name },
       });
     })
     .catch((err) => {
