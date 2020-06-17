@@ -131,6 +131,12 @@ exports.updatePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
+      // creator: ID of user that created post, req.userId was extracted from token
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized.');
+        error.statusCode = 403; // Forbidden (see https://dev.to/adarshkkumar/http-status-401-vs-403-2c59)
+        throw error;
+      }
       if (imageUrl !== post.imageUrl) {
         // clearImage is utility function defined in this file
         clearImage(post.imageUrl);
@@ -160,7 +166,12 @@ exports.deletePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      // TODO: Verify that post author is same as logged-in user
+      // Verify that post author is same as logged-in user
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized.');
+        error.statusCode = 403;
+        throw error;
+      }
       clearImage(post.imageUrl);
       return Post.findByIdAndRemove(postId);
     })
