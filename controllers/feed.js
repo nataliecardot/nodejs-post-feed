@@ -8,6 +8,7 @@ const User = require('../models/user');
 
 // Note: Starting with Node.js v 14.3.0, released 5/20, you can use await keyword outside of an asynchronous function, without async, a feature called top-level await. await a promise in top level of script, not inside of a function. Previously always needed async function around await. But if you are using it inside of a function, still need async
 
+// Note: Mongoose operations don't actually return a promise, but a promise-like object with which you can use then/catch or async/await. You could use a real promise by chaining .exec() after all Mongoose operation (for example .find().countDocuments().exec()). But promise-like object behaves the same way so not necessary. When hashing password with bcrypt library, however, you do get a real promise
 exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
