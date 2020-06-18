@@ -6,6 +6,8 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const User = require('../models/user');
 
+// Note: Starting with Node.js v 14.3.0, released 5/20, you can use await keyword outside of an asynchronous function, without async, a feature called top-level await. await a promise in top level of script, not inside of a function. Previously always needed async function around await. But if you are using it inside of a function, still need async
+
 exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
