@@ -6,31 +6,28 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const User = require('../models/user');
 
-exports.getPosts = (req, res, next) => {
+exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
   let totalItems;
-  Post.find()
-    .countDocuments()
-    .then((count) => {
-      totalItems = count;
-      return Post.find()
-        .skip((currentPage - 1) * perPage)
-        .limit(perPage);
-    })
-    .then((posts) => {
-      // Note using destructuring in json method (e.g., post instead of posts: posts)
-      res
-        .status(200)
-        .json({ message: 'Fetched posts successfully.', posts, totalItems });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      // Can't throw error since in async code/catch block of promise chain (if you throw error inside of then block, the subsequent catch block will be reached, and that error will be passed as an error to the catch block). Passing err to next() reaches next error handling Express middleware
-      next(err);
-    });
+  // Behind the scenes, async/await is converted to then/catch. Async/await makes async code appear synchronous for better readibility. So can use try/catch instead of then/catch
+  try {
+    const totalItems = await Post.find().countDocuments();
+    const posts = await Post.find()
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    // Note using destructuring in json method (e.g., post instead of posts: posts)
+    res
+      .status(200)
+      .json({ message: 'Fetched posts successfully.', posts, totalItems });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    // Can't throw error since in async code/catch block of promise chain (if you throw error inside of then block, the subsequent catch block will be reached, and that error will be passed as an error to the catch block). Passing err to next() reaches next error handling Express middleware
+    next(err);
+  }
 };
 
 exports.createPost = (req, res, next) => {
