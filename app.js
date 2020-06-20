@@ -76,6 +76,12 @@ mongoose
     useNewUrlParser: true,
   })
   .then((result) => {
-    app.listen(8080);
+    const server = app.listen(8080);
+    // Exposes a function that requires the created server as an argument. Listen method above returns a new Node.js server, so can store it in a constant. Adding parentheses to execute function that is returned, with server passed to it. This gives us a socket.io object that sets up all the WebSockets stuff behind the scenes
+    const io = require('socket.io')(server);
+    // Set up event listener, to wait for a new connection, so whenever a new client connects to server. Execute function where we get the client (the "socket") that connected as an argument, or the connection as an argument to be precise. So socket is the connection between server and client that connected, and this function will be executed for every new connection
+    io.on('connection', (socket) => {
+      console.log('Client connected.');
+    });
   })
   .catch((err) => console.log(err));
