@@ -49,7 +49,6 @@ exports.createPost = async (req, res, next) => {
   }
   const imageUrl = req.file.path.replace('\\', '/');
   const { title, content } = req.body;
-  let creator;
   const post = new Post({
     title,
     content,
@@ -63,6 +62,8 @@ exports.createPost = async (req, res, next) => {
     const user = await User.findById(req.userId);
     user.posts.push(post);
     await user.save();
+    // socket.io emit method sends message to all connected clients/users, while broadcast sends to all users except the one from which request was sent. First arg is event name (arbitrary), second is data you want to send. action key: what happened ('channel' is posts), and post created is saved in post key (destructured; set to have post saved above as value)
+    io.getIO().emit('posts', { action: 'create', post });
     res.status(201).json({
       message: 'Post created successfully!',
       post,
