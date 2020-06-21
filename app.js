@@ -50,7 +50,7 @@ app.use((req, res, next) => {
   // Allow these origins to use specific HTTP methods
   res.setHeader(
     'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE'
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
   );
   // Headers clients can use on requests
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
