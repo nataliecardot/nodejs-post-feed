@@ -40,7 +40,8 @@ const fileFilter = (req, file, cb) => {
 // Middleware needed to parse incoming JSON data so can extract it on the request body (body parser adds body field on incoming request)
 // app.use(bodyParser.urlencoded()); // For x-www-form-urlencoded, default format for data sent via form post request
 app.use(bodyParser.json()); // application/json
-app.use(multer({ storage: fileStorage, fileFilter }).single('image')); // .single('image')) informs multer will extract single file stored in field named image in incoming requests
+// .single('image')) informs multer will extract single file stored in field named image in incoming requests
+app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Set CORS headers to bypass CORS error, a default security mechanism set by browsers that occurs when the server-side web API (the back end, which has the API endpoints, the path and method, and defines the logic that should execute on the server when a request reaches them) and client (front end) are on different servers/domains and try to exchange data
