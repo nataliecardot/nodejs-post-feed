@@ -176,7 +176,8 @@ exports.deletePost = async (req, res, next) => {
     const user = await User.findById(req.userId);
     user.posts.pull(postId);
     await user.save();
-
+    // emit event to the posts channel now that done deleting. Keep pattern of what happened to post inside data package being emitted
+    io.getIO().emit('posts', { action: 'delete', post: postId });
     res.status(200).json({ message: 'Deleted post.' });
   } catch (err) {
     if (!err.statusCode) {
