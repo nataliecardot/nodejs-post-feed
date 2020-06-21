@@ -120,15 +120,14 @@ exports.updatePost = async (req, res, next) => {
     throw error;
   }
   try {
-    // .populate('creator') - this takes creator id which was stored in post object, reaches out to users collection, fetches data corresponding to that user id, and adds it in the post
+    // .populate('creator') - populate 'creator' field with full user data. Takes creator id which was stored in post object, reaches out to users collection, fetches data corresponding to that user id, and adds it in the post
     const post = await Post.findById(postId).populate('creator');
     if (!post) {
       const error = new Error('Could not find post.');
       error.statusCode = 404;
       throw error;
     }
-    // creator: ID of user that created post, req.userId was extracted from token
-    if (post.creator.toString() !== req.userId) {
+    if (post.creator._id.toString() !== req.userId) {
       const error = new Error('Not authorized!');
       error.statusCode = 403; // Forbidden (see https://dev.to/adarshkkumar/http-status-401-vs-403-2c59)
       throw error;
