@@ -6,12 +6,22 @@ const authMiddleware = require('../middleware/is-auth');
 
 it('should throw an error if no authorization header is present', () => {
   const req = {
-    get() {
+    get(headerName) {
       return null;
     },
   };
-  // Passing empty dummy object for response since not testing anything related to it, and the code we're testing doesn't use it. Passing empty arrow function in place of next() call
-  expect(authMiddleware.bind(this, req, {}, () => {})).to.throw(
+  // Can't call directly (would just get the error being checked for, but it won't be handled, with the test shown as passing/failed); allow Mocha/Chai to call, passing reference to function. Using arrow function as alternative to binding with 'this' as this value, since arrow functions have lexical context (arrow functions do not bind their own this; instead, they inherit the one from the parent scope, which is called "lexical scoping")
+  expect(() => authMiddleware(req, {}, () => {})).to.throw(
     'Not authenticated.'
   );
+});
+
+it('should throw an error if authorization header value is a string without a space', () => {
+  const req = {
+    get(headerName) {
+      // The correct value of authorization header is in the format 'Bearer xxxxx.yyyyy.zzzzz'. This is split into array of substrings using the space as a separator, with the second string in the array becoming the token value. If you only have a string without a space as the header value, and therefore there is no second substring in the array, an error 'JsonWebTokenError: jwt must be provided' is thrown
+      return 'xyz';
+    },
+  };
+  expect(() => authMiddleware(req, {}, () => {})).to.throw();
 });
