@@ -21,7 +21,7 @@ describe('Auth controller - login', () => {
     AuthController.login(req, {}, () => {}).then((result) => {
       expect(result).to.be.an('error');
       expect(result).to.have.property('statusCode', 500);
-      // Signal to Mocha that it should wait for this code to execute before treating this test case (inside the it method) as done
+      // Signal to Mocha that it should wait for this code to execute before treating this test case (inside the it method) as done (otherwise would have a false test pass, because Mocha wouldn't wait for test case finish since there is async code)
       done();
     });
 
