@@ -10,7 +10,7 @@ describe('Auth controller - login', () => {
     // Force an error to be thrown
     User.findOne.throws();
 
-    // login is an async function; added complexity
+    // login is an async function (promises used within it); added complexity
     expect(AuthController.login)
 
     User.findOne.restore()
