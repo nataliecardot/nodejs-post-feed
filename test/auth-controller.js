@@ -1,8 +1,11 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const mongoose = require('mongoose');
 
 const User = require('../models/user');
 const AuthController = require('../controllers/auth');
+
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-4yuid.mongodb.net/test-feed`;
 
 describe('Auth controller - login', () => {
   it('should throw an error with status code 500 if accessing database fails', (done) => {
@@ -26,5 +29,26 @@ describe('Auth controller - login', () => {
     });
 
     User.findOne.restore();
+  });
+
+  // Will use a testing database to test the getUserStatus controller action
+  it('should send a response with a valid user status for an existing user', (done) => {
+    mongoose
+      .connect(MONGODB_URI, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+      })
+      .then((result) => {
+        const user = new User({
+          email: 'test@test.com',
+          password: 'tester',
+          name: 'test',
+          posts: [],
+          // status doesn't need to be set because there's a default defined
+        });
+        return user.save();
+      })
+      .then(() => {})
+      .catch((err) => console.log(err));
   });
 });
