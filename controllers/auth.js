@@ -69,6 +69,8 @@ exports.login = async (req, res, next) => {
     }
     next(err);
   }
+  // Implicitly returns promise hidden behind async/await (for use in auth-controller test file)
+  return;
 };
 
 exports.getUserStatus = async (req, res, next) => {
