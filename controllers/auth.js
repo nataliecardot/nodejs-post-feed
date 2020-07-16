@@ -70,6 +70,7 @@ exports.login = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
+    // For use in testing
     return err;
   }
 };
