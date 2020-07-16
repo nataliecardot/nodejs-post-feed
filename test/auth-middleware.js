@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const jwt = require('jsonwebtoken');
 
 const authMiddleware = require('../middleware/is-auth');
 
@@ -27,5 +28,28 @@ describe('Auth middleware', () => {
       },
     };
     expect(() => authMiddleware(req, {}, () => {})).to.throw();
+  });
+
+  it('should throw an error if the token cannot be verified', () => {
+    const req = {
+      get(headerName) {
+        return 'Bearer xxxxx.yyyyy.zzzzz';
+      },
+    };
+    expect(() => authMiddleware(req, {}, () => {})).to.throw();
+  });
+
+  it('should yield a userId after decoding the token', () => {
+    const req = {
+      get(headerName) {
+        return 'Bearer xxxxx.yyyyy.zzzzz';
+      },
+    };
+    // Overwriting actual verify method provided by the package
+    jwt.verify = () => {
+      return { userId: 'abc' };
+    };
+    authMiddleware(req, {}, () => {});
+    expect(req).to.have.property('userId');
   });
 });
