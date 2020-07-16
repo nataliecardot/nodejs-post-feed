@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const jwt = require('jsonwebtoken');
+const sinon = require('sinon');
 
 const authMiddleware = require('../middleware/is-auth');
 
@@ -30,6 +31,26 @@ describe('Auth middleware', () => {
     expect(() => authMiddleware(req, {}, () => {})).to.throw();
   });
 
+  it('should yield a userId after decoding the token', () => {
+    const req = {
+      get(headerName) {
+        return 'Bearer xxxxx.yyyyy.zzzzz';
+      },
+    };
+    // Sinon: Package that allows for creating a "stub", a replacement for original method from a dependency, but enables easily restoring the method (so it can be used by other tests)
+    // Object that has method to replace, then method name as a string, are passed in
+    sinon.stub(jwt, 'verify');
+    // Configure what method should return (by default, Sinon replaces method with an empty one that doesn't do anything [except some things like registering function calls])
+    jwt.verify.returns({ userId: 'abc' });
+    authMiddleware(req, {}, () => {});
+    expect(req).to.have.property('userId');
+    expect(req).to.have.property('userId', 'abc');
+    // Sinon registers function calls
+    expect(jwt.verify.called).to.be.true;
+    // Restore original verify method (restore method provided by Sinon) so its functionality can be used by subsequent tests
+    jwt.verify.restore();
+  });
+
   it('should throw an error if the token cannot be verified', () => {
     const req = {
       get(headerName) {
@@ -37,19 +58,5 @@ describe('Auth middleware', () => {
       },
     };
     expect(() => authMiddleware(req, {}, () => {})).to.throw();
-  });
-
-  it('should yield a userId after decoding the token', () => {
-    const req = {
-      get(headerName) {
-        return 'Bearer xxxxx.yyyyy.zzzzz';
-      },
-    };
-    // Overwriting actual verify method provided by the package
-    jwt.verify = () => {
-      return { userId: 'abc' };
-    };
-    authMiddleware(req, {}, () => {});
-    expect(req).to.have.property('userId');
   });
 });
