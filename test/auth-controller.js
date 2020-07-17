@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const AuthController = require('../controllers/auth');
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-4yuid.mongodb.net/test-feed`;
-
 describe('Auth controller - login', () => {
   it('should throw an error with status code 500 if accessing database fails', (done) => {
     // done argument is optional and is a function that can be called once test case is done. By default it's done once executed from top to bottom, but with this arg, Mocha will wait for done to be called, then you can call it in an async code snippet
@@ -34,21 +32,43 @@ describe('Auth controller - login', () => {
   // Will use a testing database to test the getUserStatus controller action
   it('should send a response with a valid user status for an existing user', (done) => {
     mongoose
-      .connect(MONGODB_URI, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      })
+      .connect(
+        `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-4yuid.mongodb.net/test-feed`,
+        {
+          useUnifiedTopology: true,
+          useNewUrlParser: true,
+        }
+      )
       .then((result) => {
         const user = new User({
           email: 'test@test.com',
           password: 'tester',
           name: 'test',
           posts: [],
+          _id: '5c0f66b979af55031b34728a',
           // status doesn't need to be set because there's a default defined
         });
         return user.save();
       })
-      .then(() => {})
+      .then((result) => {
+        const req = { userId: '5c0f66b979af55031b34728a' };
+        const res = {
+          statusCode: 500,
+          userStatus: null,
+          status(code) {
+            this.statusCode = code;
+            return this;
+          },
+          json(data) {
+            this.userStatus = data.status;
+          },
+        };
+        AuthController.getUserStatus(req, res, () => {}).then((result) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.userStatus).to.be.equal(`I'm new!`);
+          done();
+        });
+      })
       .catch((err) => console.log(err));
   });
 });
