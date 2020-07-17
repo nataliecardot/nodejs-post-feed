@@ -29,7 +29,6 @@ describe('Auth controller - login', () => {
     User.findOne.restore();
   });
 
-  // Will use a testing database to test the getUserStatus controller action
   it('should send a response with a valid user status for an existing user', (done) => {
     mongoose
       .connect(
