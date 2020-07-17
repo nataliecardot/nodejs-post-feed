@@ -42,7 +42,7 @@ describe('Auth controller - login', () => {
         const user = new User({
           email: 'test@test.com',
           password: 'tester',
-          name: 'test',
+          name: 'Test',
           posts: [],
           _id: '5c0f66b979af55031b34728a',
           // status doesn't need to be set because there's a default defined
