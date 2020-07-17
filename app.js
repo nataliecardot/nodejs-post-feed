@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { uuid } = require('uuidv4');
 
-// Tells server to load anything in .env file into an environment variable.
+// Tells server to load anything in .env file into an environment variable
 require('dotenv').config();
 
 const feedRoutes = require('./routes/feed');

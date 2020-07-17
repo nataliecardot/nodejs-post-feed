@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const AuthController = require('../controllers/auth');
 
+// Tells server to load anything in .env file into an environment variable
+require('dotenv').config();
+
 describe('Auth controller - login', () => {
   it('should throw an error with status code 500 if accessing database fails', (done) => {
     // done argument is optional and is a function that can be called once test case is done. By default it's done once executed from top to bottom, but with this arg, Mocha will wait for done to be called, then you can call it in an async code snippet
@@ -65,7 +68,12 @@ describe('Auth controller - login', () => {
         AuthController.getUserStatus(req, res, () => {}).then((result) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.userStatus).to.be.equal(`I'm new!`);
-          done();
+          // Deletes all documents in users collection (if you have a test with dummy data, clean up after test, to ensure clean setup for next test run)
+          User.deleteMany({}).then(() => {
+            return mongoose.disconnect().then(() => {
+              done();
+            });
+          });
         });
       })
       .catch((err) => console.log(err));
