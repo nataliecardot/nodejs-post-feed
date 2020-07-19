@@ -41,8 +41,8 @@ describe('Auth controller', () => {
   // For cleanup work that needs to be done after every test case
   afterEach(() => {});
 
+  // done argument is optional and is a function that can be called once test case is done. By default it's done once executed from top to bottom, but with this arg, Mocha will wait for done to be called, then you can call it in an async code snippet
   it('should throw an error with status code 500 if accessing database fails', (done) => {
-    // done argument is optional and is a function that can be called once test case is done. By default it's done once executed from top to bottom, but with this arg, Mocha will wait for done to be called, then you can call it in an async code snippet
     sinon.stub(User, 'findOne');
     // Force an error to be thrown
     User.findOne.throws();
