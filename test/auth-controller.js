@@ -35,6 +35,12 @@ describe('Auth controller', () => {
       });
   });
 
+  // Runs more often than before method; runs before every it() function call. Useful if need to reset something before every test case/if some initialization must be run before every test case
+  beforeEach(() => {});
+
+  // For cleanup work that needs to be done after every test case
+  afterEach(() => {});
+
   it('should throw an error with status code 500 if accessing database fails', (done) => {
     // done argument is optional and is a function that can be called once test case is done. By default it's done once executed from top to bottom, but with this arg, Mocha will wait for done to be called, then you can call it in an async code snippet
     sinon.stub(User, 'findOne');
@@ -89,9 +95,3 @@ describe('Auth controller', () => {
       });
   });
 });
-
-// Runs more often than before method; runs before every it() function call. Useful if need to reset something before every test case/if some initialization must be run before every test case
-beforeEach(() => {});
-
-// For cleanup work that needs to be done after every test case
-afterEach(() => {});
