@@ -64,7 +64,7 @@ exports.createPost = async (req, res, next) => {
     await post.save();
     const user = await User.findById(req.userId);
     user.posts.push(post);
-    await user.save();
+    const savedUser = await user.save();
     // socket.io emit method sends message to all connected clients/users, while broadcast sends to all users except the one from which request was sent. First arg is event name (arbitrary), second is data you want to send. action key: what happened ('channel' is posts), and post created is saved in post key
     // user.name can be used because fetching user above, which will be an object which also has a name
     io.getIO().emit('posts', {
@@ -76,6 +76,8 @@ exports.createPost = async (req, res, next) => {
       post,
       creator: { _id: user._id, name: user.name },
     });
+    // Returning constant for use in testing
+    return savedUser;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
